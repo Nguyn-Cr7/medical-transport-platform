@@ -1,0 +1,28 @@
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+application-secret.properties
+
+# Build output
+backend/target/
+target/
+frontend/.next/
+frontend/out/
+frontend/build/
+dist/
+
+# Dependencies
+frontend/node_modules/
+node_modules/
+
+# IDE & Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS & Log files
+.DS_Store
+Thumbs.db
+*.log
