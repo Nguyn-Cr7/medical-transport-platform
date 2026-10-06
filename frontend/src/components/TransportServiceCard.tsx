@@ -1,63 +1,23 @@
-'use client';
-
 import React from 'react';
-import Link from 'next/link';
+import { Ambulance } from 'lucide-react';
 import { TransportServiceItem } from '@/data/transportServices';
-import { ZaloCTA } from './ZaloCTA';
 
-interface TransportServiceCardProps {
-  service: TransportServiceItem;
-}
-
-export function TransportServiceCard({ service }: TransportServiceCardProps) {
+export function TransportServiceCard({ service }: { service: TransportServiceItem }) {
   return (
-    <div className="group relative rounded-2xl bg-slate-900/80 border border-slate-800 p-6 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/10 flex flex-col justify-between">
-      {service.popular && (
-        <span className="absolute -top-3 right-6 px-3 py-0.5 rounded-full text-[11px] font-bold bg-cyan-500 text-slate-950 shadow-md">
-          Chuyến Phổ Biến
-        </span>
-      )}
-
+    <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col md:flex-row gap-6">
+      <div className="w-14 h-14 bg-brand-light shrink-0 rounded-xl flex items-center justify-center text-brand-primary">
+        <Ambulance size={28} />
+      </div>
       <div>
-        <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-xl mb-4 group-hover:scale-110 transition-transform">
-          🚑
-        </div>
-
-        <span className="text-xs font-semibold text-cyan-400 uppercase tracking-wider">
-          Vận Tải Y Tế
-        </span>
-        <h3 className="text-xl font-bold text-white mt-1 group-hover:text-cyan-400 transition-colors">
-          {service.title}
-        </h3>
-        <p className="mt-3 text-slate-400 text-sm leading-relaxed">
-          {service.shortDesc}
-        </p>
-
-        {/* Feature List */}
-        <ul className="mt-5 space-y-2">
-          {service.features.map((feature, idx) => (
-            <li key={idx} className="flex items-start gap-2 text-xs text-slate-300">
-              <span className="text-cyan-400 font-bold">✓</span>
-              <span>{feature}</span>
+        <h3 className="text-xl font-bold text-slate-900 mb-3">{service.title}</h3>
+        <p className="text-slate-600 text-sm leading-relaxed mb-4">{service.shortDesc}</p>
+        <ul className="text-sm text-slate-700 space-y-1">
+          {service.features.map((f: string, i: number) => (
+            <li key={i} className="flex items-center gap-2">
+              <span className="text-brand-secondary">✓</span> {f}
             </li>
           ))}
         </ul>
-
-        {/* Vehicle Badge */}
-        <div className="mt-5 p-3 rounded-xl bg-slate-950/60 border border-slate-800/80">
-          <span className="block text-[11px] font-semibold text-slate-500 uppercase">Loại xe phục vụ:</span>
-          <span className="text-xs text-slate-300 font-medium">{service.vehicleType}</span>
-        </div>
-      </div>
-
-      <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between gap-3">
-        <Link
-          href="/transport"
-          className="text-xs font-bold text-slate-300 hover:text-cyan-400 transition-colors"
-        >
-          Xem chi tiết ➔
-        </Link>
-        <ZaloCTA text="Đặt xe Zalo" size="sm" variant="primary" />
       </div>
     </div>
   );

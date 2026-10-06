@@ -1,81 +1,50 @@
 import React from 'react';
-import { Metadata } from 'next';
-import { SectionTitle } from '@/components/SectionTitle';
 import { CTASection } from '@/components/CTASection';
-import { COMPANY_INFO } from '@/data/companyInfo';
 
-export const metadata: Metadata = {
-  title: 'Giới Thuyết Doanh Nghiệp',
-  description: 'Giới thiệu tầm nhìn, sứ mệnh, giá trị cốt lõi và định hướng phát triển của Nền tảng Y tế & Vận tải.',
-};
+export const metadata = { title: 'Giới thiệu' };
 
 export default function AboutPage() {
   return (
-    <main className="pb-16">
-      {/* Hero */}
-      <section className="relative py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-900 via-slate-900/60 to-slate-950 border-b border-slate-800/80 text-center">
-        <div className="max-w-7xl mx-auto">
-          <span className="px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-6 inline-block">
-            🏢 TỔNG QUAN DOANH NGHIỆP
-          </span>
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight max-w-4xl mx-auto">
-            Về Chúng Tôi - <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">{COMPANY_INFO.name}</span>
-          </h1>
-          <p className="mt-5 text-base sm:text-lg text-slate-400 max-w-3xl mx-auto leading-relaxed">
-            {COMPANY_INFO.about.description}
+    <main>
+      <section className="bg-brand-light py-20 lg:py-28 text-center">
+        <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 mb-6">Về CAREVIA</h1>
+        <p className="text-lg text-slate-600 max-w-2xl mx-auto px-4">
+          CAREVIA tự hào là đơn vị tiên phong cung cấp giải pháp y tế tại nhà và vận chuyển bệnh nhân chuyên nghiệp, tận tâm nhất.
+        </p>
+      </section>
+      
+      <section className="py-24 bg-white max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="prose prose-lg text-slate-600 mx-auto">
+          <h2 className="text-2xl font-bold text-slate-900 mb-6">Tầm nhìn & Sứ mệnh</h2>
+          <p className="mb-6">
+            Với mong muốn mang đến những dịch vụ y tế và vận chuyển bệnh nhân an toàn, chất lượng nhất, CAREVIA luôn nỗ lực không ngừng cải tiến và nâng cao tiêu chuẩn phục vụ.
           </p>
-        </div>
-      </section>
-
-      {/* Vision & Mission */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="p-8 rounded-3xl bg-slate-900/90 border border-emerald-500/30">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold text-2xl mb-4">
-              👁️
+          <p className="mb-12">
+            Chúng tôi tin rằng, mỗi bệnh nhân đều xứng đáng nhận được sự chăm sóc tận tâm như chính người thân trong gia đình.
+          </p>
+          
+          <h2 className="text-2xl font-bold text-slate-900 mb-6">Giá trị cốt lõi</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8">
+            <div className="border border-slate-200 p-6 rounded-xl bg-slate-50">
+              <h3 className="font-bold text-brand-primary mb-2">1. Tận tâm</h3>
+              <p className="text-sm">Phục vụ khách hàng bằng cả trái tim, đặt sức khỏe bệnh nhân lên hàng đầu.</p>
             </div>
-            <h2 className="text-2xl font-bold text-white">Tầm Nhìn Chiến Lược</h2>
-            <p className="mt-4 text-slate-300 text-sm leading-relaxed">
-              {COMPANY_INFO.about.vision}
-            </p>
-          </div>
-
-          <div className="p-8 rounded-3xl bg-slate-900/90 border border-cyan-500/30">
-            <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold text-2xl mb-4">
-              🚀
+            <div className="border border-slate-200 p-6 rounded-xl bg-slate-50">
+              <h3 className="font-bold text-brand-primary mb-2">2. An toàn</h3>
+              <p className="text-sm">Trang thiết bị y tế hiện đại, đảm bảo an toàn tuyệt đối trên mọi nẻo đường.</p>
             </div>
-            <h2 className="text-2xl font-bold text-white">Sứ Mệnh Phục Vụ</h2>
-            <p className="mt-4 text-slate-300 text-sm leading-relaxed">
-              {COMPANY_INFO.about.mission}
-            </p>
+            <div className="border border-slate-200 p-6 rounded-xl bg-slate-50">
+              <h3 className="font-bold text-brand-primary mb-2">3. Nhanh chóng</h3>
+              <p className="text-sm">Quy trình điều phối thông minh, cam kết có mặt kịp thời trong thời gian ngắn nhất.</p>
+            </div>
+            <div className="border border-slate-200 p-6 rounded-xl bg-slate-50">
+              <h3 className="font-bold text-brand-primary mb-2">4. Chuyên nghiệp</h3>
+              <p className="text-sm">Đội ngũ y bác sĩ, điều dưỡng và tài xế giàu kinh nghiệm, chuyên môn cao.</p>
+            </div>
           </div>
         </div>
       </section>
-
-      {/* Core Values */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <SectionTitle
-          badge="GIÁ TRỊ CỐT LÕI"
-          title="Kim Chỉ Nam"
-          highlightText="Hoạt Động"
-          subtitle="Những giá trị định hình văn hóa và chất lượng dịch vụ của chúng tôi."
-        />
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {COMPANY_INFO.about.values.map((val, idx) => (
-            <div key={idx} className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800">
-              <span className="text-emerald-400 font-bold text-lg block mb-2">0{idx + 1}</span>
-              <h3 className="text-xl font-bold text-white">{val.title}</h3>
-              <p className="mt-2 text-xs text-slate-400 leading-relaxed">{val.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA */}
-      <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <CTASection />
-      </div>
+      <CTASection />
     </main>
   );
 }

@@ -1,63 +1,25 @@
-'use client';
-
 import React from 'react';
-import Link from 'next/link';
+import { HeartPulse } from 'lucide-react';
 import { MedicalServiceItem } from '@/data/medicalServices';
-import { ZaloCTA } from './ZaloCTA';
 
-interface MedicalServiceCardProps {
-  service: MedicalServiceItem;
-}
-
-export function MedicalServiceCard({ service }: MedicalServiceCardProps) {
+export function MedicalServiceCard({ service }: { service: MedicalServiceItem }) {
   return (
-    <div className="group relative rounded-2xl bg-slate-900/80 border border-slate-800 p-6 hover:border-emerald-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/10 flex flex-col justify-between">
-      {service.popular && (
-        <span className="absolute -top-3 right-6 px-3 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500 text-slate-950 shadow-md">
-          Phổ Biến
-        </span>
-      )}
-
-      <div>
-        <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xl mb-4 group-hover:scale-110 transition-transform">
-          🏥
-        </div>
-
-        <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-          {service.category}
-        </span>
-        <h3 className="text-xl font-bold text-white mt-1 group-hover:text-emerald-400 transition-colors">
-          {service.title}
-        </h3>
-        <p className="mt-3 text-slate-400 text-sm leading-relaxed">
-          {service.shortDesc}
-        </p>
-
-        {/* Feature List */}
-        <ul className="mt-5 space-y-2">
-          {service.features.map((feature, idx) => (
-            <li key={idx} className="flex items-start gap-2 text-xs text-slate-300">
-              <span className="text-emerald-400 font-bold">✓</span>
-              <span>{feature}</span>
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+      <div className="w-12 h-12 bg-brand-light rounded-xl flex items-center justify-center text-brand-primary mb-6">
+        <HeartPulse size={24} />
+      </div>
+      <h3 className="text-xl font-bold text-slate-900 mb-3">{service.title}</h3>
+      <p className="text-slate-600 text-sm leading-relaxed mb-6">{service.shortDesc || service.fullDesc}</p>
+      
+      <div className="space-y-2">
+        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Bao gồm:</span>
+        <ul className="text-sm text-slate-700 space-y-1">
+          {service.features.slice(0, 3).map((f: string, i: number) => (
+            <li key={i} className="flex items-start gap-2">
+              <span className="text-brand-secondary">✓</span> {f}
             </li>
           ))}
         </ul>
-
-        {/* Target Patient Badge */}
-        <div className="mt-5 p-3 rounded-xl bg-slate-950/60 border border-slate-800/80">
-          <span className="block text-[11px] font-semibold text-slate-500 uppercase">Đối tượng phục vụ:</span>
-          <span className="text-xs text-slate-300 leading-snug">{service.targetPatients}</span>
-        </div>
-      </div>
-
-      <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between gap-3">
-        <Link
-          href="/medical"
-          className="text-xs font-bold text-slate-300 hover:text-emerald-400 transition-colors"
-        >
-          Xem chi tiết ➔
-        </Link>
-        <ZaloCTA text="Đăng ký Zalo" size="sm" variant="secondary" />
       </div>
     </div>
   );

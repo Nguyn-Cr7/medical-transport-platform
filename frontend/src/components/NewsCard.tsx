@@ -1,59 +1,26 @@
-'use client';
-
 import React from 'react';
 import Link from 'next/link';
 import { NewsArticle } from '@/data/news';
 
-interface NewsCardProps {
-  article: NewsArticle;
-}
-
-export function NewsCard({ article }: NewsCardProps) {
-  const categoryBadgeColors: Record<string, string> = {
-    medical: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    transport: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-    company: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
-  };
-
+export function NewsCard({ article }: { article: NewsArticle }) {
   return (
-    <article className="group rounded-2xl bg-slate-900/80 border border-slate-800 p-6 hover:border-slate-700 transition-all flex flex-col justify-between shadow-lg">
-      <div>
-        {/* Top Badges & Date */}
-        <div className="flex items-center justify-between gap-2 mb-4">
-          <span
-            className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
-              categoryBadgeColors[article.category] || 'bg-slate-800 text-slate-300'
-            }`}
-          >
-            {article.categoryLabel}
-          </span>
-          <span className="text-xs text-slate-500">
-            {article.publishedAt} • {article.readTime}
-          </span>
+    <Link href={`/news/${article.slug}`} className="group flex flex-col bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+      <div className="aspect-video bg-slate-100 flex items-center justify-center relative overflow-hidden">
+        <div className="text-slate-400 font-medium">Image Placeholder</div>
+        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-brand-primary rounded-full shadow-sm">
+          {article.categoryLabel}
         </div>
-
-        {/* Title */}
-        <h3 className="text-lg font-bold text-white group-hover:text-emerald-400 transition-colors leading-snug line-clamp-2">
-          <Link href={`/news/${article.slug}`}>
-            {article.title}
-          </Link>
+      </div>
+      <div className="p-6 flex-grow flex flex-col">
+        <div className="text-xs text-slate-500 mb-3">{article.publishedAt}</div>
+        <h3 className="text-lg font-bold text-slate-900 mb-3 group-hover:text-brand-primary transition-colors line-clamp-2">
+          {article.title}
         </h3>
-
-        {/* Excerpt */}
-        <p className="mt-3 text-sm text-slate-400 leading-relaxed line-clamp-3">
+        <p className="text-sm text-slate-600 line-clamp-3 mb-4 flex-grow">
           {article.excerpt}
         </p>
+        <div className="text-sm font-semibold text-brand-primary mt-auto">Xem chi tiết →</div>
       </div>
-
-      <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs">
-        <span className="text-slate-500">Tác giả: <strong className="text-slate-300">{article.author}</strong></span>
-        <Link
-          href={`/news/${article.slug}`}
-          className="font-bold text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1"
-        >
-          Đọc tiếp ➔
-        </Link>
-      </div>
-    </article>
+    </Link>
   );
 }
