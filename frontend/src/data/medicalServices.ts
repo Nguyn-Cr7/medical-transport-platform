@@ -13,23 +13,6 @@ export interface MedicalServiceItem {
 
 export const MEDICAL_SERVICES: MedicalServiceItem[] = [
   {
-    id: "med-1",
-    slug: "cham-soc-tai-nha",
-    title: "Chăm Sóc Y Tế Tại Nhà",
-    category: "Chăm sóc sức khỏe",
-    shortDesc: "Đội ngũ điều dưỡng, bác sĩ thăm khám, theo dõi sức khỏe và chăm sóc toàn diện tận nhà.",
-    fullDesc: "Dịch vụ chăm sóc y tế tại nhà cung cấp giải pháp khám bệnh, thay băng, rửa vết thương, tiêm truyền theo y lệnh bác sĩ và chăm sóc người bệnh cao tuổi hoặc sau phẫu thuật ngay tại không gian sống quen thuộc của gia đình.",
-    icon: "Stethoscope",
-    features: [
-      "Thăm khám và theo dõi sinh hiệu định kỳ",
-      "Tiêm thuốc, truyền dịch theo chỉ định y khoa",
-      "Thay băng, rửa vết thương, chăm sóc vết mổ",
-      "Đặt và chăm sóc sonde dạ dày, sonde tiểu"
-    ],
-    targetPatients: "Người cao tuổi, bệnh nhân sau phẫu thuật, người mắc bệnh mãn tính khó di chuyển.",
-    popular: true
-  },
-  {
     id: "med-2",
     slug: "ho-tro-tai-kham",
     title: "Hỗ Trợ Tái Khám Bệnh Viện",
@@ -38,7 +21,6 @@ export const MEDICAL_SERVICES: MedicalServiceItem[] = [
     fullDesc: "Dịch vụ nhân viên y tế đi cùng hỗ trợ bệnh nhân làm thủ tục đăng ký khám, hướng dẫn di chuyển giữa các khoa phòng, nhận kết quả xét nghiệm và mua thuốc theo đơn, giúp người bệnh và người nhà tiết kiệm thời gian và công sức.",
     icon: "UserCheck",
     features: [
-      "Hỗ trợ đăng ký và lấy số khám ưu tiên",
       "Đồng hành hỗ trợ di chuyển nội bộ bệnh viện",
       "Ghi nhận chi tiết lời dặn của bác sĩ chuyên khoa",
       "Hỗ trợ lấy kết quả xét nghiệm và nhận thuốc"
@@ -73,7 +55,7 @@ export const MEDICAL_SERVICES: MedicalServiceItem[] = [
     features: [
       "Xét nghiệm công thức máu, đường huyết, mỡ máu",
       "Xét nghiệm chức năng gan, thận, vi chất",
-      "Quy trình lấy mẫu chuẩn y khoa không đau",
+      "Quy trình lấy mẫu chuẩn y khoa",
       "Bác sĩ gọi điện tư vấn kết quả chi tiết"
     ],
     targetPatients: "Gia đình cần kiểm tra sức khỏe định kỳ, người ngại xếp hàng chờ đợi ở bệnh viện."

@@ -93,6 +93,22 @@ export const TRANSPORT_SERVICES: TransportServiceItem[] = [
     ],
     vehicleType: "Đa dạng các dòng xe vận chuyển chuyên dụng",
     suitableFor: "Gia đình bệnh nhân có nhu cầu di chuyển đặc thù."
+  },
+  {
+    id: "trans-6",
+    slug: "xe-tu-lai",
+    title: "Dịch Vụ Xe Tự Lái",
+    shortDesc: "Cho thuê xe tự lái phục vụ nhu cầu di chuyển linh hoạt của cá nhân và gia đình.",
+    fullDesc: "Dịch vụ cho thuê xe tự lái với đa dạng các dòng xe từ 4 chỗ đến 7 chỗ đời mới. Thủ tục đơn giản, giao xe tận nơi, giúp khách hàng chủ động hoàn toàn trong việc di chuyển theo lộ trình riêng.",
+    icon: "Car",
+    features: [
+      "Đa dạng các dòng xe 4-7 chỗ đời mới",
+      "Thủ tục thuê xe nhanh chóng, linh hoạt",
+      "Giao nhận xe tận nhà theo yêu cầu",
+      "Bảo hiểm 2 chiều, hỗ trợ kỹ thuật 24/7"
+    ],
+    vehicleType: "Xe 4 chỗ, 7 chỗ phổ thông và cao cấp",
+    suitableFor: "Người có bằng lái xe muốn chủ động di chuyển cá nhân hoặc cùng gia đình."
   }
 ];
 
