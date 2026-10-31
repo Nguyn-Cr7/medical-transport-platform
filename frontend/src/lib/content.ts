@@ -267,10 +267,13 @@ async function fetchServicesUncached(category?: ServiceCategory): Promise<Servic
     }
 
     const { data, error } = await query.returns<DbServiceRow[]>();
-    if (error || !data || data.length === 0) {
-      console.warn("[Content] No services from Supabase or error, using fallback:", error?.message);
+    if (error) {
+      console.warn("[Content] Error fetching services from Supabase, using fallback:", error.message);
       return getFallbackServices(category);
     }
+
+    // Only fallback if query failed. If Supabase succeeded and returned empty, respect the empty array.
+    if (!data) return [];
 
     return data.map((d: DbServiceRow) => ({
       id: d.id,
@@ -306,16 +309,16 @@ async function fetchServiceBySlugUncached(slug: string): Promise<ServiceItem | n
       .from("services")
       .select("*")
       .eq("slug", slug)
-      .eq("is_published", true)
       .maybeSingle<DbServiceRow>();
 
-    if (error || !data) {
+    if (error) {
+      console.warn(`[Content] Error checking service '${slug}' in Supabase:`, error.message);
       const fallbackList = getFallbackServices();
-      const fallback = fallbackList.find((s) => s.slug === slug);
-      if (fallback) {
-        console.warn(`[Content] Service '${slug}' not in Supabase, using fallback.`);
-        return fallback;
-      }
+      return fallbackList.find((s) => s.slug === slug) || null;
+    }
+
+    // If query succeeded: if record does not exist or is unpublished (draft), return null (404)
+    if (!data || data.is_published === false) {
       return null;
     }
 
@@ -362,10 +365,12 @@ async function fetchPostsUncached(category?: string): Promise<PostItem[]> {
     }
 
     const { data, error } = await query.returns<DbPostRow[]>();
-    if (error || !data || data.length === 0) {
-      console.warn("[Content] No posts from Supabase or error, using fallback:", error?.message);
+    if (error) {
+      console.warn("[Content] Error fetching posts from Supabase, using fallback:", error.message);
       return getFallbackPosts(category);
     }
+
+    if (!data) return [];
 
     const categoryLabels: Record<string, string> = {
       medical: "Y Tế Tại Nhà",
@@ -407,13 +412,13 @@ async function fetchPostBySlugUncached(slug: string): Promise<PostItem | null> {
       .eq("status", "published")
       .maybeSingle<DbPostRow>();
 
-    if (error || !data) {
+    if (error) {
+      console.warn(`[Content] Error checking post '${slug}' in Supabase:`, error.message);
       const fallbackList = getFallbackPosts();
-      const fallback = fallbackList.find((p) => p.slug === slug);
-      if (fallback) {
-        console.warn(`[Content] Post '${slug}' not in Supabase, using fallback.`);
-        return fallback;
-      }
+      return fallbackList.find((p) => p.slug === slug) || null;
+    }
+
+    if (!data) {
       return null;
     }
 
@@ -458,10 +463,12 @@ async function fetchJobsUncached(): Promise<JobItem[]> {
       .order("sort_order", { ascending: true })
       .returns<DbJobRow[]>();
 
-    if (error || !data || data.length === 0) {
-      console.warn("[Content] No jobs from Supabase or error, using fallback:", error?.message);
+    if (error) {
+      console.warn("[Content] Error fetching jobs from Supabase, using fallback:", error.message);
       return getFallbackJobs();
     }
+
+    if (!data) return [];
 
     return data.map((d: DbJobRow) => ({
       id: d.id,

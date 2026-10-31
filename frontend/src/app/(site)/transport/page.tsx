@@ -25,15 +25,26 @@ export default async function TransportPage() {
 
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {services.map((service) => (
-              <TransportServiceCard
-                key={service.id}
-                service={service}
-                defaultZaloUrl={settings.zaloUrl}
-              />
-            ))}
-          </div>
+          {services.length === 0 ? (
+            <div className="text-center py-16 bg-slate-50 border border-slate-200 rounded-2xl max-w-2xl mx-auto px-6">
+              <p className="text-lg font-semibold text-slate-700 mb-2">
+                Nội dung đang được cập nhật
+              </p>
+              <p className="text-sm text-slate-500">
+                Hiện tại chưa có dịch vụ vận chuyển y tế nào được xuất bản. Vui lòng liên hệ hotline hoặc quay lại sau.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {services.map((service) => (
+                <TransportServiceCard
+                  key={service.id}
+                  service={service}
+                  defaultZaloUrl={settings.zaloUrl}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </section>
       <CTASection />

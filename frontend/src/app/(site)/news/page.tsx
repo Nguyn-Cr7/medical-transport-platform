@@ -17,11 +17,22 @@ export default async function NewsPage() {
         <p className="text-slate-600">Cập nhật thông tin y tế và các hoạt động của CAREVIA</p>
       </section>
       <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts.map((article) => (
-            <NewsCard key={article.id} article={article} />
-          ))}
-        </div>
+        {posts.length === 0 ? (
+          <div className="text-center py-16 bg-slate-50 border border-slate-200 rounded-2xl max-w-2xl mx-auto px-6">
+            <p className="text-lg font-semibold text-slate-700 mb-2">
+              Nội dung đang được cập nhật
+            </p>
+            <p className="text-sm text-slate-500">
+              Hiện tại chưa có bài viết nào được xuất bản. Vui lòng quay lại sau.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {posts.map((article) => (
+              <NewsCard key={article.id} article={article} />
+            ))}
+          </div>
+        )}
       </section>
     </main>
   );

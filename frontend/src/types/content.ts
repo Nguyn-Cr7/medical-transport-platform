@@ -4,6 +4,7 @@ export type ServiceActionType = "zalo" | "detail_page" | "none";
 export interface PriceImage {
   url: string;
   label?: string;
+  group?: string;
 }
 
 export interface ServiceItem {

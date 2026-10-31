@@ -7,6 +7,8 @@ import { getService, getServices, getSettings } from "@/lib/content";
 import { PriceImageGallery } from "@/components/PriceImageGallery";
 import { CTASection } from "@/components/CTASection";
 
+export const dynamicParams = true;
+
 interface MedicalDetailPageProps {
   params: Promise<{
     slug: string;

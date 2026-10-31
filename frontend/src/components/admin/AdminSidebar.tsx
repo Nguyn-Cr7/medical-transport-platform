@@ -39,13 +39,11 @@ const NAV_ITEMS: NavItem[] = [
     name: "Dịch vụ y tế",
     href: "/admin/medical",
     icon: Stethoscope,
-    badge: "GĐ4",
   },
   {
     name: "Dịch vụ vận chuyển",
     href: "/admin/transport",
     icon: Ambulance,
-    badge: "GĐ4",
   },
   {
     name: "Tin tức",
