@@ -1,10 +1,15 @@
-import React from 'react';
-import { NewsCard } from '@/components/NewsCard';
-import { NEWS_ARTICLES } from '@/data/news';
+import React from "react";
+import { NewsCard } from "@/components/NewsCard";
+import { getPosts } from "@/lib/content";
 
-export const metadata = { title: 'Tin tức' };
+export const metadata = {
+  title: "Tin tức & Sự kiện",
+  description: "Cập nhật thông tin y tế và các hoạt động của CAREVIA",
+};
 
-export default function NewsPage() {
+export default async function NewsPage() {
+  const posts = await getPosts();
+
   return (
     <main className="bg-white">
       <section className="bg-brand-light py-20 text-center">
@@ -13,7 +18,9 @@ export default function NewsPage() {
       </section>
       <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {NEWS_ARTICLES.map(article => <NewsCard key={article.id} article={article} />)}
+          {posts.map((article) => (
+            <NewsCard key={article.id} article={article} />
+          ))}
         </div>
       </section>
     </main>
