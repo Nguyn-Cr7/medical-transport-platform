@@ -30,7 +30,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const service = await getService(slug);
 
-  if (!service || service.actionType !== "detail_page") {
+  if (!service || service.category !== "medical" || service.actionType !== "detail_page") {
     return { title: "Dịch vụ không tồn tại" };
   }
 
@@ -47,8 +47,8 @@ export default async function MedicalDetailPage({ params }: MedicalDetailPagePro
     getSettings(),
   ]);
 
-  // Only allow services with action_type = 'detail_page'
-  if (!service || service.actionType !== "detail_page") {
+  // Only allow services with category = 'medical' and action_type = 'detail_page'
+  if (!service || service.category !== "medical" || service.actionType !== "detail_page") {
     notFound();
   }
 

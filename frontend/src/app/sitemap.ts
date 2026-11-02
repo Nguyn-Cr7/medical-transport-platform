@@ -54,9 +54,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   try {
-    const [posts, medicalServices] = await Promise.all([
+    const [posts, medicalServices, transportServices] = await Promise.all([
       getPosts(),
       getServices("medical"),
+      getServices("transport"),
     ]);
 
     // Published news articles
@@ -68,7 +69,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
     // Published medical detail pages
-    const serviceRoutes: MetadataRoute.Sitemap = (medicalServices || [])
+    const medicalRoutes: MetadataRoute.Sitemap = (medicalServices || [])
       .filter((service) => service.actionType === "detail_page" && service.isPublished)
       .map((service) => ({
         url: `${baseUrl}/medical/${service.slug}`,
@@ -77,7 +78,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.8,
       }));
 
-    return [...staticRoutes, ...serviceRoutes, ...postRoutes];
+    // Published transport detail pages
+    const transportRoutes: MetadataRoute.Sitemap = (transportServices || [])
+      .filter((service) => service.actionType === "detail_page" && service.isPublished)
+      .map((service) => ({
+        url: `${baseUrl}/transport/${service.slug}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly",
+        priority: 0.8,
+      }));
+
+    return [...staticRoutes, ...medicalRoutes, ...transportRoutes, ...postRoutes];
   } catch (err) {
     console.warn("[Sitemap] Failed to fetch dynamic routes, using static routes:", err);
     return staticRoutes;

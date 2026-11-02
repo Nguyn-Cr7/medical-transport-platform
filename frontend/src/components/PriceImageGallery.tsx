@@ -16,6 +16,9 @@ import type { PriceImage } from "@/types/content";
 interface PriceImageGalleryProps {
   images: PriceImage[];
   title?: string;
+  emptyHeading?: string;
+  emptyMessage?: string;
+  tableOfContentsLabel?: string;
 }
 
 interface DisplayPair {
@@ -67,7 +70,13 @@ function groupImagesIntoPairs(images: PriceImage[]): DisplayPair[] {
   return pairs;
 }
 
-export function PriceImageGallery({ images, title }: PriceImageGalleryProps) {
+export function PriceImageGallery({
+  images,
+  title,
+  emptyHeading,
+  emptyMessage,
+  tableOfContentsLabel,
+}: PriceImageGalleryProps) {
   const [activeLightboxIndex, setActiveLightboxIndex] = useState<number | null>(null);
 
   const totalImages = images?.length || 0;
@@ -117,10 +126,10 @@ export function PriceImageGallery({ images, title }: PriceImageGalleryProps) {
       <div className="bg-amber-50 border border-amber-200 rounded-2xl p-8 text-center my-8">
         <AlertCircle className="w-10 h-10 text-amber-500 mx-auto mb-3" />
         <h4 className="text-lg font-bold text-amber-900 mb-2">
-          {title ? `Bảng giá ${title} đang được cập nhật` : "Bảng giá đang được cập nhật"}
+          {emptyHeading || (title ? `Bảng giá ${title} đang được cập nhật` : "Bảng giá đang được cập nhật")}
         </h4>
         <p className="text-sm text-amber-700 max-w-md mx-auto">
-          Vui lòng liên hệ qua Zalo hoặc Hotline để được báo giá và tư vấn nhanh chóng.
+          {emptyMessage || "Vui lòng liên hệ qua Zalo hoặc Hotline để được báo giá và tư vấn nhanh chóng."}
         </p>
       </div>
     );
@@ -135,7 +144,9 @@ export function PriceImageGallery({ images, title }: PriceImageGalleryProps) {
         <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-2xs">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-600 mb-3">
             <Bookmark size={15} className="text-brand-primary" />
-            <span>Mục lục các gói bảng giá ({pairs.length} phần):</span>
+            <span>
+              {tableOfContentsLabel || "Mục lục các gói bảng giá"} ({pairs.length} phần):
+            </span>
           </div>
           <div className="flex flex-wrap gap-2">
             {pairs.map((pair, pIdx) => {

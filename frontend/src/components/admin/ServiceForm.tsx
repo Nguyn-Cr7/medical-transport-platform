@@ -125,9 +125,9 @@ export function ServiceForm({ category, initialData, serviceId }: ServiceFormPro
   const [sortOrder, setSortOrder] = useState<number>(initialData?.sortOrder ?? 0);
   const [isPublished, setIsPublished] = useState<boolean>(initialData?.isPublished ?? true);
 
-  // Medical specific states
+  // Action & Price Images states
   const [actionType, setActionType] = useState<ServiceActionType>(
-    isMedical ? initialData?.actionType || "none" : "none"
+    initialData?.actionType || "none"
   );
   const [zaloUrl, setZaloUrl] = useState(initialData?.zaloUrl || "");
 
@@ -313,7 +313,7 @@ export function ServiceForm({ category, initialData, serviceId }: ServiceFormPro
       return;
     }
 
-    if (isMedical && actionType === "zalo" && zaloUrl.trim()) {
+    if (actionType === "zalo" && zaloUrl.trim()) {
       if (!zaloUrl.trim().startsWith("https://")) {
         setErrorMessage(
           "Link Zalo riêng phải bắt đầu bằng 'https://' (ví dụ: https://zalo.me/0986767960)."
@@ -324,7 +324,7 @@ export function ServiceForm({ category, initialData, serviceId }: ServiceFormPro
 
     // Xây dựng mảng priceImages phẳng từ các cặp ảnh
     const priceImagesToSave: PriceImage[] = [];
-    if (isMedical && actionType === "detail_page") {
+    if (actionType === "detail_page") {
       for (const pair of imagePairs) {
         const cleanGroup = pair.group.trim();
         if (pair.front.url.trim()) {
@@ -344,7 +344,7 @@ export function ServiceForm({ category, initialData, serviceId }: ServiceFormPro
       }
 
       if (priceImagesToSave.length > 40) {
-        setErrorMessage("Tổng số ảnh bảng giá vượt quá giới hạn tối đa 40 ảnh (20 cặp).");
+        setErrorMessage("Tổng số ảnh bảng giá / thông tin vượt quá giới hạn tối đa 40 ảnh (20 cặp).");
         return;
       }
     }
@@ -361,8 +361,8 @@ export function ServiceForm({ category, initialData, serviceId }: ServiceFormPro
       icon: icon.trim(),
       sortOrder,
       isPublished,
-      actionType: isMedical ? actionType : "none",
-      zaloUrl: isMedical && actionType === "zalo" ? zaloUrl.trim() : undefined,
+      actionType,
+      zaloUrl: actionType === "zalo" ? zaloUrl.trim() : undefined,
       priceImages: priceImagesToSave,
     };
 
@@ -394,7 +394,7 @@ export function ServiceForm({ category, initialData, serviceId }: ServiceFormPro
 
   // URL xem thử trên website
   const publicUrl =
-    isMedical && actionType === "detail_page" ? `/medical/${slug}` : `/${category}`;
+    actionType === "detail_page" ? `/${category}/${slug}` : `/${category}`;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-5xl mx-auto pb-16">
@@ -665,77 +665,76 @@ export function ServiceForm({ category, initialData, serviceId }: ServiceFormPro
         </div>
       </div>
 
-      {/* Section 3: CHỈ DÀNH CHO DỊCH VỤ Y TẾ (Hành vi khi bấm thẻ & Nhiều Cặp Ảnh Bảng Giá) */}
-      {isMedical && (
-        <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-          <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-blue-600" />
-            Hành vi khi khách bấm vào thẻ dịch vụ
-          </h2>
+      {/* Section 3: Hành vi khi bấm thẻ & Các Cặp Ảnh Bảng Giá / Thông Tin */}
+      <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+        <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-blue-600" />
+          Hành vi khi khách bấm vào thẻ dịch vụ
+        </h2>
 
-          {/* 3 lựa chọn action_type */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {/* Option 1: Zalo */}
-            <label
-              className={`p-4 rounded-xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
-                actionType === "zalo"
-                  ? "border-blue-600 bg-blue-50/50 shadow-xs"
-                  : "border-slate-200 hover:border-slate-300 bg-white"
-              }`}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
-                    <MessageCircle size={18} />
-                  </div>
-                  <span className="text-sm font-bold text-slate-900">Mở Zalo</span>
+        {/* 3 lựa chọn action_type */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* Option 1: Zalo */}
+          <label
+            className={`p-4 rounded-xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
+              actionType === "zalo"
+                ? "border-blue-600 bg-blue-50/50 shadow-xs"
+                : "border-slate-200 hover:border-slate-300 bg-white"
+            }`}
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
+                  <MessageCircle size={18} />
                 </div>
-                <input
-                  type="radio"
-                  name="action_type"
-                  checked={actionType === "zalo"}
-                  onChange={() => {
-                    setActionType("zalo");
-                    setIsDirty(true);
-                  }}
-                  className="mt-1 text-blue-600 focus:ring-blue-500"
-                />
+                <span className="text-sm font-bold text-slate-900">Mở Zalo</span>
               </div>
-              <p className="text-xs text-slate-500 mt-2">
-                Bấm thẻ sẽ mở trực tiếp ứng dụng hoặc trang chat Zalo tư vấn.
-              </p>
-            </label>
+              <input
+                type="radio"
+                name="action_type"
+                checked={actionType === "zalo"}
+                onChange={() => {
+                  setActionType("zalo");
+                  setIsDirty(true);
+                }}
+                className="mt-1 text-blue-600 focus:ring-blue-500"
+              />
+            </div>
+            <p className="text-xs text-slate-500 mt-2">
+              Bấm thẻ sẽ mở trực tiếp ứng dụng hoặc trang chat Zalo tư vấn.
+            </p>
+          </label>
 
-            {/* Option 2: Trang chi tiết & ảnh giá */}
-            <label
-              className={`p-4 rounded-xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
-                actionType === "detail_page"
-                  ? "border-purple-600 bg-purple-50/50 shadow-xs"
-                  : "border-slate-200 hover:border-slate-300 bg-white"
-              }`}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center">
-                    <FileSpreadsheet size={18} />
-                  </div>
-                  <span className="text-sm font-bold text-slate-900">Trang chi tiết & Giá</span>
+          {/* Option 2: Trang chi tiết & ảnh giá / thông tin */}
+          <label
+            className={`p-4 rounded-xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
+              actionType === "detail_page"
+                ? "border-purple-600 bg-purple-50/50 shadow-xs"
+                : "border-slate-200 hover:border-slate-300 bg-white"
+            }`}
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center">
+                  <FileSpreadsheet size={18} />
                 </div>
-                <input
-                  type="radio"
-                  name="action_type"
-                  checked={actionType === "detail_page"}
-                  onChange={() => {
-                    setActionType("detail_page");
-                    setIsDirty(true);
-                  }}
-                  className="mt-1 text-purple-600 focus:ring-purple-500"
-                />
+                <span className="text-sm font-bold text-slate-900">Trang chi tiết & Hình ảnh</span>
               </div>
-              <p className="text-xs text-slate-500 mt-2">
-                Bấm thẻ mở trang riêng /medical/[slug] với các cặp ảnh bảng giá chi tiết.
-              </p>
-            </label>
+              <input
+                type="radio"
+                name="action_type"
+                checked={actionType === "detail_page"}
+                onChange={() => {
+                  setActionType("detail_page");
+                  setIsDirty(true);
+                }}
+                className="mt-1 text-purple-600 focus:ring-purple-500"
+              />
+            </div>
+            <p className="text-xs text-slate-500 mt-2">
+              Bấm thẻ mở trang riêng /{category}/[slug] với các cặp ảnh chi tiết.
+            </p>
+          </label>
 
             {/* Option 3: Không bấm */}
             <label
@@ -803,10 +802,10 @@ export function ServiceForm({ category, initialData, serviceId }: ServiceFormPro
                 <div>
                   <h3 className="text-sm font-bold text-purple-950 flex items-center gap-2">
                     <Layers size={17} className="text-purple-600" />
-                    Danh sách Các Cặp Ảnh Bảng Giá
+                    Danh sách Các Cặp Ảnh (Bảng Giá / Thông Tin)
                   </h3>
                   <p className="text-xs text-purple-700 mt-0.5">
-                    Mỗi gói/loại xét nghiệm tương ứng 1 cặp (Mặt trước + Mặt sau). Tối đa 20 cặp.
+                    Mỗi gói hoặc loại xe/dịch vụ tương ứng 1 cặp (Mặt trước + Mặt sau). Tối đa 20 cặp.
                   </p>
                 </div>
 
@@ -1061,13 +1060,12 @@ export function ServiceForm({ category, initialData, serviceId }: ServiceFormPro
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-dashed border-purple-300 hover:border-purple-500 bg-purple-50/50 hover:bg-purple-50 text-purple-700 font-bold text-xs transition-all cursor-pointer disabled:opacity-50"
                 >
                   <Plus size={16} />
-                  <span>+ Thêm một cặp ảnh bảng giá mới ({imagePairs.length}/20)</span>
+                  <span>+ Thêm một cặp ảnh mới ({imagePairs.length}/20)</span>
                 </button>
               </div>
             </div>
           )}
         </div>
-      )}
 
       {/* Section 4: Cài đặt hiển thị & Đối tượng */}
       <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
