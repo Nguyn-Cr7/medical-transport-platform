@@ -16,6 +16,9 @@ import type { PriceImage } from "@/types/content";
 interface PriceImageGalleryProps {
   images: PriceImage[];
   title?: string;
+  emptyHeading?: string;
+  emptyMessage?: string;
+  tableOfContentsLabel?: string;
 }
 
 interface DisplayPair {
@@ -25,6 +28,15 @@ interface DisplayPair {
     image: PriceImage;
     globalIndex: number;
   }[];
+}
+
+/**
+ * Kiểm tra nhãn có phải là nhãn kỹ thuật mặt trước / mặt sau hay không (chỉ hiển thị ở admin)
+ */
+function isFrontOrBackLabel(label?: string | null): boolean {
+  if (!label) return false;
+  const l = label.trim().toLowerCase();
+  return l === "mặt trước" || l === "mặt sau" || l === "mat truoc" || l === "mat sau";
 }
 
 /**
@@ -67,7 +79,13 @@ function groupImagesIntoPairs(images: PriceImage[]): DisplayPair[] {
   return pairs;
 }
 
-export function PriceImageGallery({ images, title }: PriceImageGalleryProps) {
+export function PriceImageGallery({
+  images,
+  title,
+  emptyHeading,
+  emptyMessage,
+  tableOfContentsLabel,
+}: PriceImageGalleryProps) {
   const [activeLightboxIndex, setActiveLightboxIndex] = useState<number | null>(null);
 
   const totalImages = images?.length || 0;
@@ -117,10 +135,10 @@ export function PriceImageGallery({ images, title }: PriceImageGalleryProps) {
       <div className="bg-amber-50 border border-amber-200 rounded-2xl p-8 text-center my-8">
         <AlertCircle className="w-10 h-10 text-amber-500 mx-auto mb-3" />
         <h4 className="text-lg font-bold text-amber-900 mb-2">
-          {title ? `Bảng giá ${title} đang được cập nhật` : "Bảng giá đang được cập nhật"}
+          {emptyHeading || (title ? `Bảng giá ${title} đang được cập nhật` : "Bảng giá đang được cập nhật")}
         </h4>
         <p className="text-sm text-amber-700 max-w-md mx-auto">
-          Vui lòng liên hệ qua Zalo hoặc Hotline để được báo giá và tư vấn nhanh chóng.
+          {emptyMessage || "Vui lòng liên hệ qua Zalo hoặc Hotline để được báo giá và tư vấn nhanh chóng."}
         </p>
       </div>
     );
@@ -135,7 +153,9 @@ export function PriceImageGallery({ images, title }: PriceImageGalleryProps) {
         <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-2xs">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-600 mb-3">
             <Bookmark size={15} className="text-brand-primary" />
-            <span>Mục lục các gói bảng giá ({pairs.length} phần):</span>
+            <span>
+              {tableOfContentsLabel || "Mục lục các gói bảng giá"} ({pairs.length} phần):
+            </span>
           </div>
           <div className="flex flex-wrap gap-2">
             {pairs.map((pair, pIdx) => {
@@ -174,47 +194,65 @@ export function PriceImageGallery({ images, title }: PriceImageGalleryProps) {
             {/* Khung hiển thị ảnh: 2 Khung Cân Đối hoặc 1 Khung Giữa */}
             {isSingle ? (
               // Cặp chỉ có 1 ảnh: Hiển thị 1 khung ở giữa, giữ đúng tỷ lệ và kích thước tiêu chuẩn
-              <div className="max-w-md mx-auto">
-                <div className="flex flex-col">
-                  <div
-                    onClick={() => setActiveLightboxIndex(pair.items[0].globalIndex)}
-                    className="group relative aspect-[3/4] sm:aspect-[4/5] bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden cursor-zoom-in shadow-xs hover:shadow-md transition-all"
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`Phóng to ${pair.items[0].image.label || "Bảng giá"}`}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        setActiveLightboxIndex(pair.items[0].globalIndex);
-                      }
-                    }}
-                  >
-                    <Image
-                      src={pair.items[0].image.url}
-                      alt={pair.items[0].image.label || "Bảng giá"}
-                      fill
-                      loading="lazy"
-                      className="object-contain p-2 group-hover:scale-[1.02] transition-transform duration-300"
-                      sizes="(max-width: 768px) 100vw, 450px"
-                    />
-                    <div className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full shadow">
-                      {pair.items[0].image.label || "Bảng giá"}
-                    </div>
-                    <div className="absolute bottom-4 right-4 bg-white/90 text-slate-700 p-2 rounded-xl shadow opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Maximize2 size={18} />
+              (() => {
+                const singleItem = pair.items[0];
+                const rawLabel = singleItem.image.label?.trim();
+                const hasCustomLabel = Boolean(rawLabel && !isFrontOrBackLabel(rawLabel));
+                const displayLabel: string = (hasCustomLabel && rawLabel) || pair.group || title || "Hình ảnh chi tiết";
+
+                return (
+                  <div className="max-w-md mx-auto">
+                    <div className="flex flex-col">
+                      <div
+                        onClick={() => setActiveLightboxIndex(singleItem.globalIndex)}
+                        className="group relative aspect-[3/4] sm:aspect-[4/5] bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden cursor-zoom-in shadow-xs hover:shadow-md transition-all"
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`Phóng to ${displayLabel}`}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            setActiveLightboxIndex(singleItem.globalIndex);
+                          }
+                        }}
+                      >
+                        <Image
+                          src={singleItem.image.url}
+                          alt={displayLabel}
+                          fill
+                          loading="lazy"
+                          className="object-contain p-2 group-hover:scale-[1.02] transition-transform duration-300"
+                          sizes="(max-width: 768px) 100vw, 450px"
+                        />
+                        {hasCustomLabel && (
+                          <div className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full shadow">
+                            {rawLabel}
+                          </div>
+                        )}
+                        <div className="absolute bottom-4 right-4 bg-white/90 text-slate-700 p-2 rounded-xl shadow opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Maximize2 size={18} />
+                        </div>
+                      </div>
+                      <div className="mt-2 text-center text-xs font-medium text-slate-600">
+                        {hasCustomLabel ? (
+                          <>
+                            <span>{rawLabel}</span> •{" "}
+                            <span className="text-brand-primary">Bấm để phóng to</span>
+                          </>
+                        ) : (
+                          <span className="text-brand-primary">Bấm để phóng to</span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  <div className="mt-2 text-center text-xs font-medium text-slate-600">
-                    {pair.items[0].image.label || "Bảng giá"} •{" "}
-                    <span className="text-brand-primary">Bấm để phóng to</span>
-                  </div>
-                </div>
-              </div>
+                );
+              })()
             ) : (
               // Cặp đầy đủ 2 ảnh: Grid 2 cột cân đối trên desktop, 1 cột trên mobile
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {pair.items.map((item, itemIdx) => {
-                  const defaultLabel = itemIdx === 0 ? "Mặt trước" : "Mặt sau";
-                  const label = item.image.label || defaultLabel;
+                  const rawLabel = item.image.label?.trim();
+                  const hasCustomLabel = Boolean(rawLabel && !isFrontOrBackLabel(rawLabel));
+                  const displayLabel: string = (hasCustomLabel && rawLabel) || (pair.group ? `${pair.group} - ${itemIdx + 1}` : (title ? `${title} - ${itemIdx + 1}` : `Hình ảnh ${itemIdx + 1}`));
 
                   return (
                     <div key={itemIdx} className="flex flex-col">
@@ -223,7 +261,7 @@ export function PriceImageGallery({ images, title }: PriceImageGalleryProps) {
                         className="group relative aspect-[3/4] sm:aspect-[4/5] bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden cursor-zoom-in shadow-xs hover:shadow-md transition-all"
                         role="button"
                         tabIndex={0}
-                        aria-label={`Phóng to ${label}`}
+                        aria-label={`Phóng to ${displayLabel}`}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
                             setActiveLightboxIndex(item.globalIndex);
@@ -232,21 +270,30 @@ export function PriceImageGallery({ images, title }: PriceImageGalleryProps) {
                       >
                         <Image
                           src={item.image.url}
-                          alt={label}
+                          alt={displayLabel}
                           fill
                           loading="lazy"
                           className="object-contain p-2 group-hover:scale-[1.02] transition-transform duration-300"
                           sizes="(max-width: 768px) 100vw, 50vw"
                         />
-                        <div className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full shadow">
-                          {label}
-                        </div>
+                        {hasCustomLabel && (
+                          <div className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full shadow">
+                            {rawLabel}
+                          </div>
+                        )}
                         <div className="absolute bottom-4 right-4 bg-white/90 text-slate-700 p-2 rounded-xl shadow opacity-0 group-hover:opacity-100 transition-opacity">
                           <Maximize2 size={18} />
                         </div>
                       </div>
                       <div className="mt-2 text-center text-xs font-medium text-slate-600">
-                        {label} • <span className="text-brand-primary">Bấm để phóng to</span>
+                        {hasCustomLabel ? (
+                          <>
+                            <span>{rawLabel}</span> •{" "}
+                            <span className="text-brand-primary">Bấm để phóng to</span>
+                          </>
+                        ) : (
+                          <span className="text-brand-primary">Bấm để phóng to</span>
+                        )}
                       </div>
                     </div>
                   );
@@ -273,7 +320,7 @@ export function PriceImageGallery({ images, title }: PriceImageGalleryProps) {
                   {activeImage.group}
                 </span>
               )}
-              {activeImage.label && (
+              {activeImage.label && !isFrontOrBackLabel(activeImage.label) && (
                 <span className="text-white text-xs sm:text-sm font-bold bg-brand-primary/80 px-3 py-1 rounded-full truncate">
                   {activeImage.label}
                 </span>
@@ -320,7 +367,7 @@ export function PriceImageGallery({ images, title }: PriceImageGalleryProps) {
           >
             <Image
               src={activeImage.url}
-              alt={activeImage.label || "Bảng giá phóng to"}
+              alt={(!isFrontOrBackLabel(activeImage.label) && activeImage.label) || activeImage.group || title || "Hình ảnh chi tiết phóng to"}
               fill
               className="object-contain"
               sizes="95vw"

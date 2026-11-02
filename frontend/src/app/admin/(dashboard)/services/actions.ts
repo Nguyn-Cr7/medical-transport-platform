@@ -139,9 +139,11 @@ function triggerServicesRevalidation(
 
     if (slug) {
       revalidatePath(`/medical/${slug}`);
+      revalidatePath(`/transport/${slug}`);
     }
     if (oldSlug && oldSlug !== slug) {
       revalidatePath(`/medical/${oldSlug}`);
+      revalidatePath(`/transport/${oldSlug}`);
     }
   } catch (err) {
     console.warn("[ServicesAction] Revalidation note:", err);
@@ -288,38 +290,31 @@ export async function createServiceAction(
   let zaloUrl: string | null = null;
   let priceImages: PriceImage[] = [];
 
-  if (category === "medical") {
-    actionType = input.actionType || "none";
-    if (!["zalo", "detail_page", "none"].includes(actionType)) {
-      actionType = "none";
-    }
+  actionType = input.actionType || "none";
+  if (!["zalo", "detail_page", "none"].includes(actionType)) {
+    actionType = "none";
+  }
 
-    if (actionType === "zalo") {
-      const zUrl = (input.zaloUrl || "").trim();
-      if (zUrl) {
-        if (!zUrl.startsWith("https://")) {
-          return {
-            success: false,
-            message: "Link Zalo phải bắt đầu bằng 'https://' (ví dụ: https://zalo.me/0986767960).",
-          };
-        }
-        zaloUrl = zUrl;
-      }
-    } else if (actionType === "detail_page") {
-      const priceValidation = validateAndCleanPriceImages(input.priceImages);
-      if (!priceValidation.valid) {
+  if (actionType === "zalo") {
+    const zUrl = (input.zaloUrl || "").trim();
+    if (zUrl) {
+      if (!zUrl.startsWith("https://")) {
         return {
           success: false,
-          message: priceValidation.message || "Danh sách ảnh bảng giá không hợp lệ.",
+          message: "Link Zalo phải bắt đầu bằng 'https://' (ví dụ: https://zalo.me/0986767960).",
         };
       }
-      priceImages = priceValidation.data;
+      zaloUrl = zUrl;
     }
-  } else {
-    // Vận chuyển: luôn là 'none', không có Zalo riêng hay ảnh giá
-    actionType = "none";
-    zaloUrl = null;
-    priceImages = [];
+  } else if (actionType === "detail_page") {
+    const priceValidation = validateAndCleanPriceImages(input.priceImages);
+    if (!priceValidation.valid) {
+      return {
+        success: false,
+        message: priceValidation.message || "Danh sách ảnh bảng giá / thông tin không hợp lệ.",
+      };
+    }
+    priceImages = priceValidation.data;
   }
 
   // 4. Chuẩn hóa features (bỏ dòng trống)
@@ -454,37 +449,31 @@ export async function updateServiceAction(
   let zaloUrl: string | null = null;
   let priceImages: PriceImage[] = [];
 
-  if (category === "medical") {
-    actionType = input.actionType || "none";
-    if (!["zalo", "detail_page", "none"].includes(actionType)) {
-      actionType = "none";
-    }
+  actionType = input.actionType || "none";
+  if (!["zalo", "detail_page", "none"].includes(actionType)) {
+    actionType = "none";
+  }
 
-    if (actionType === "zalo") {
-      const zUrl = (input.zaloUrl || "").trim();
-      if (zUrl) {
-        if (!zUrl.startsWith("https://")) {
-          return {
-            success: false,
-            message: "Link Zalo phải bắt đầu bằng 'https://'.",
-          };
-        }
-        zaloUrl = zUrl;
-      }
-    } else if (actionType === "detail_page") {
-      const priceValidation = validateAndCleanPriceImages(input.priceImages);
-      if (!priceValidation.valid) {
+  if (actionType === "zalo") {
+    const zUrl = (input.zaloUrl || "").trim();
+    if (zUrl) {
+      if (!zUrl.startsWith("https://")) {
         return {
           success: false,
-          message: priceValidation.message || "Danh sách ảnh bảng giá không hợp lệ.",
+          message: "Link Zalo phải bắt đầu bằng 'https://'.",
         };
       }
-      priceImages = priceValidation.data;
+      zaloUrl = zUrl;
     }
-  } else {
-    actionType = "none";
-    zaloUrl = null;
-    priceImages = [];
+  } else if (actionType === "detail_page") {
+    const priceValidation = validateAndCleanPriceImages(input.priceImages);
+    if (!priceValidation.valid) {
+      return {
+        success: false,
+        message: priceValidation.message || "Danh sách ảnh bảng giá / thông tin không hợp lệ.",
+      };
+    }
+    priceImages = priceValidation.data;
   }
 
   // 4. Chuẩn hóa features

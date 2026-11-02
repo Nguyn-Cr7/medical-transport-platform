@@ -254,7 +254,7 @@ export function ServiceListManager({ category }: ServiceListManagerProps) {
                 <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold text-xs uppercase tracking-wider">
                   <th className="py-4 px-4 text-center w-20">Thứ tự</th>
                   <th className="py-4 px-4">Dịch vụ</th>
-                  {isMedical && <th className="py-4 px-4">Hành vi khi bấm</th>}
+                  <th className="py-4 px-4">Hành vi khi bấm</th>
                   <th className="py-4 px-4 text-center">Trạng thái</th>
                   <th className="py-4 px-4 text-right">Thao tác</th>
                 </tr>
@@ -266,8 +266,8 @@ export function ServiceListManager({ category }: ServiceListManagerProps) {
 
                   // Đường dẫn public tương ứng
                   const publicLink =
-                    isMedical && service.actionType === "detail_page"
-                      ? `/medical/${service.slug}`
+                    service.actionType === "detail_page"
+                      ? `/${category}/${service.slug}`
                       : publicBaseUrl;
 
                   return (
@@ -327,37 +327,35 @@ export function ServiceListManager({ category }: ServiceListManagerProps) {
                         </div>
                       </td>
 
-                      {/* Cột Hành vi khi bấm (Chỉ dành cho Y tế) */}
-                      {isMedical && (
-                        <td className="py-4 px-4">
-                          {service.actionType === "zalo" ? (
-                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-                              <MessageCircle size={13} />
-                              <span>Mở Zalo</span>
-                              {service.zaloUrl && (
-                                <span className="text-[10px] text-blue-500 font-normal">
-                                  (link riêng)
-                                </span>
-                              )}
-                            </div>
-                          ) : service.actionType === "detail_page" ? (
-                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200">
-                              <FileSpreadsheet size={13} />
-                              <span>Trang chi tiết & Giá</span>
-                              {service.priceImages && service.priceImages.length > 0 && (
-                                <span className="bg-purple-200/70 text-purple-800 text-[10px] px-1.5 py-0.2 rounded-full font-bold">
-                                  {service.priceImages.length} ảnh
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
-                              <Ban size={13} />
-                              <span>Không bấm</span>
-                            </div>
-                          )}
-                        </td>
-                      )}
+                      {/* Cột Hành vi khi bấm */}
+                      <td className="py-4 px-4">
+                        {service.actionType === "zalo" ? (
+                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                            <MessageCircle size={13} />
+                            <span>Mở Zalo</span>
+                            {service.zaloUrl && (
+                              <span className="text-[10px] text-blue-500 font-normal">
+                                (link riêng)
+                              </span>
+                            )}
+                          </div>
+                        ) : service.actionType === "detail_page" ? (
+                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200">
+                            <FileSpreadsheet size={13} />
+                            <span>Trang chi tiết & Giá</span>
+                            {service.priceImages && service.priceImages.length > 0 && (
+                              <span className="bg-purple-200/70 text-purple-800 text-[10px] px-1.5 py-0.2 rounded-full font-bold">
+                                {service.priceImages.length} ảnh
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                            <Ban size={13} />
+                            <span>Không bấm</span>
+                          </div>
+                        )}
+                      </td>
 
                       {/* Cột Trạng thái Xuất bản */}
                       <td className="py-4 px-4 text-center">

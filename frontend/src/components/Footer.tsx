@@ -16,13 +16,18 @@ export async function Footer() {
     <footer className="bg-brand-primary-dark text-white pt-16 pb-8 mt-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="col-span-1 md:col-span-1">
-          <Image
-            src={settings.logoUrl || "/branding/logo-carevia.png"}
-            alt={`${settings.companyName} Logo`}
-            width={180}
-            height={45}
-            className="h-10 w-auto object-contain mb-4 brightness-0 invert"
-          />
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center bg-white px-3.5 py-1.5 rounded-xl mb-4 shadow-xs hover:opacity-95 transition-opacity"
+          >
+            <Image
+              src={settings.logoUrl || "/branding/logo-carevia.png"}
+              alt={`${settings.companyName} Logo`}
+              width={160}
+              height={40}
+              className="h-8 sm:h-9 w-auto object-contain"
+            />
+          </Link>
           <p className="text-sm text-blue-100 opacity-90 leading-relaxed">
             {settings.footerText ||
               "Giải pháp toàn diện về chăm sóc y tế tại nhà và vận chuyển bệnh nhân an toàn, nhanh chóng, chuyên nghiệp."}

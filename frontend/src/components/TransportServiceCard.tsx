@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import {
   Ambulance,
   Home,
@@ -60,11 +61,23 @@ export function TransportServiceCard({ service, defaultZaloUrl }: TransportServi
         href={targetUrl}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label={`Liên hệ tư vấn dịch vụ ${service.title} qua Zalo`}
+        aria-label={`Liên hệ tư vấn dịch vụ ${service.title} qua Zalo (mở tab mới)`}
         className="block group cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-primary rounded-2xl h-full"
       >
         {cardBody}
       </a>
+    );
+  }
+
+  if (service.actionType === "detail_page") {
+    return (
+      <Link
+        href={`/transport/${service.slug}`}
+        aria-label={`Xem chi tiết dịch vụ ${service.title}`}
+        className="block group cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-primary rounded-2xl h-full"
+      >
+        {cardBody}
+      </Link>
     );
   }
 
