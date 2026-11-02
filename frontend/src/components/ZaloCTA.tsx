@@ -1,40 +1,42 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { COMPANY_INFO } from '@/data/companyInfo';
+import React from "react";
 
 interface ZaloCTAProps {
   text?: string;
   className?: string;
-  variant?: 'primary' | 'secondary' | 'outline' | 'gradient';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "primary" | "secondary" | "outline" | "gradient";
+  size?: "sm" | "md" | "lg";
+  zaloUrl?: string;
 }
 
 export function ZaloCTA({
-  text = 'ỨNG TUYỂN QUA ZALO',
-  className = '',
-  variant = 'primary',
-  size = 'md',
+  text = "ỨNG TUYỂN QUA ZALO",
+  className = "",
+  variant = "primary",
+  size = "md",
+  zaloUrl = "https://zalo.me/0986767960",
 }: ZaloCTAProps) {
   const baseStyles =
-    'inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-all duration-200 active:scale-95 shadow-md hover:shadow-lg cursor-pointer';
+    "inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-all duration-200 active:scale-95 shadow-md hover:shadow-lg cursor-pointer";
 
   const sizeStyles = {
-    sm: 'px-3 py-1.5 text-xs',
-    md: 'px-5 py-2.5 text-sm',
-    lg: 'px-7 py-3.5 text-base',
+    sm: "px-3 py-1.5 text-xs",
+    md: "px-5 py-2.5 text-sm",
+    lg: "px-7 py-3.5 text-base",
   };
 
   const variantStyles = {
-    primary: 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/20',
-    secondary: 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/20',
-    outline: 'border-2 border-blue-600 text-blue-400 hover:bg-blue-600/10',
-    gradient: 'bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:opacity-95 text-white shadow-blue-500/25',
+    primary: "bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/20",
+    secondary: "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/20",
+    outline: "border-2 border-blue-600 text-blue-400 hover:bg-blue-600/10",
+    gradient:
+      "bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500 hover:opacity-95 text-white shadow-blue-500/25",
   };
 
   return (
     <a
-      href={COMPANY_INFO.zaloUrl}
+      href={zaloUrl}
       target="_blank"
       rel="noopener noreferrer"
       className={`${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${className}`}
