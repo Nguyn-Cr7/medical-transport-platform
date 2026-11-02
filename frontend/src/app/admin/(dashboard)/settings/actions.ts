@@ -19,6 +19,7 @@ export async function updateSiteSettingsAction(settings: Partial<SiteSettings>) 
   }
 
   const supabase = await createClient();
+
   const { error } = await supabase
     .from("site_settings")
     .update({

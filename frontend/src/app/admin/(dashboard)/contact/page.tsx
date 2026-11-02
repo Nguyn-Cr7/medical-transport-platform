@@ -1,13 +1,11 @@
 import React from "react";
-import { UpcomingModule } from "@/components/admin/UpcomingModule";
+import type { Metadata } from "next";
+import { ContactMessageManager } from "@/components/admin/ContactMessageManager";
+
+export const metadata: Metadata = {
+  title: "Tin Nhắn Liên Hệ | Admin CAREVIA",
+};
 
 export default function AdminContactPage() {
-  return (
-    <UpcomingModule
-      title="Quản Lý Tin Nhắn Liên Hệ"
-      phase="Giai đoạn 5 (GĐ5)"
-      description="Chức năng xem toàn bộ danh sách khách hàng gửi yêu cầu tư vấn, đánh dấu đã đọc / chưa đọc và xóa tin nhắn liên hệ."
-    />
-  );
+  return <ContactMessageManager />;
 }
-

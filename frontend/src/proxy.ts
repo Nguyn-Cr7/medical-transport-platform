@@ -42,8 +42,11 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const isLoginPage = request.nextUrl.pathname.startsWith("/admin/login");
+  const isServerAction = request.headers.has("next-action");
 
-  if (!user && !isLoginPage) {
+  // Allow Server Actions to proceed to their server handler (where verifyAdmin handles auth safely)
+  // to avoid breaking the Next.js Flight stream with a 307 redirect
+  if (!user && !isLoginPage && !isServerAction) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/admin/login";
     return NextResponse.redirect(loginUrl);

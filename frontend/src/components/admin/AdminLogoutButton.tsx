@@ -1,12 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 export function AdminLogoutButton({ className = "" }: { className?: string }) {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const handleLogout = async () => {
@@ -15,11 +13,12 @@ export function AdminLogoutButton({ className = "" }: { className?: string }) {
     try {
       const supabase = createClient();
       await supabase.auth.signOut();
-      router.push("/admin/login");
-      router.refresh();
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.href = "/admin/login";
     } catch (err) {
       console.error("[Logout] Error:", err);
-      router.push("/admin/login");
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.href = "/admin/login";
     }
   };
 

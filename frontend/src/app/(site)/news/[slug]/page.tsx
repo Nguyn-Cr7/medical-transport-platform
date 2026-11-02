@@ -7,6 +7,8 @@ import { getPost, getPosts } from "@/lib/content";
 import { CTASection } from "@/components/CTASection";
 import { sanitizeHtml } from "@/lib/sanitize";
 
+export const dynamicParams = true;
+
 interface NewsDetailPageProps {
   params: Promise<{
     slug: string;
@@ -25,12 +27,30 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
   const article = await getPost(slug);
 
   if (!article) {
-    return { title: "Bài viết không tồn tại" };
+    return { title: "Bài viết không tồn tại | CAREVIA" };
   }
 
+  const title = `${article.title} | CAREVIA`;
+  const description = article.excerpt || "Tin tức và kiến thức y tế, chăm sóc sức khỏe từ CAREVIA.";
+  const images = article.coverImageUrl ? [{ url: article.coverImageUrl, alt: article.title }] : [];
+
   return {
-    title: `${article.title} | CAREVIA`,
-    description: article.excerpt,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      publishedTime: article.publishedAt,
+      authors: [article.author || "CAREVIA"],
+      images,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: article.coverImageUrl ? [article.coverImageUrl] : [],
+    },
   };
 }
 

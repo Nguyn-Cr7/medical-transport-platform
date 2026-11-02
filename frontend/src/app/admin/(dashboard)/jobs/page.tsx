@@ -1,13 +1,11 @@
 import React from "react";
-import { UpcomingModule } from "@/components/admin/UpcomingModule";
+import type { Metadata } from "next";
+import { JobListManager } from "@/components/admin/JobListManager";
+
+export const metadata: Metadata = {
+  title: "Quản lý Tuyển Dụng | Admin CAREVIA",
+};
 
 export default function AdminJobsPage() {
-  return (
-    <UpcomingModule
-      title="Quản Lý Tin Tuyển Dụng"
-      phase="Giai đoạn 5 (GĐ5)"
-      description="Chức năng đăng tin cộng tác viên y tế, tài xế, truyền thông, kinh doanh và bật/tắt trạng thái Mở / Đóng tin tuyển dụng."
-    />
-  );
+  return <JobListManager />;
 }
-

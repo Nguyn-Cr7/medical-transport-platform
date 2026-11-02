@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -19,6 +19,7 @@ import {
   Shield,
 } from "lucide-react";
 import { AdminLogoutButton } from "./AdminLogoutButton";
+import { getUnreadContactCountAction } from "@/app/admin/(dashboard)/contact/actions";
 
 interface NavItem {
   name: string;
@@ -49,13 +50,11 @@ const NAV_ITEMS: NavItem[] = [
     name: "Tin tức",
     href: "/admin/posts",
     icon: FileText,
-    badge: "GĐ5",
   },
   {
     name: "Tuyển dụng",
     href: "/admin/jobs",
     icon: Briefcase,
-    badge: "GĐ5",
   },
   {
     name: "Quản lý hình ảnh",
@@ -66,7 +65,6 @@ const NAV_ITEMS: NavItem[] = [
     name: "Tin nhắn liên hệ",
     href: "/admin/contact",
     icon: Mail,
-    badge: "GĐ5",
   },
   {
     name: "Cấu hình website",
@@ -77,11 +75,34 @@ const NAV_ITEMS: NavItem[] = [
 
 interface AdminSidebarProps {
   userEmail?: string;
+  initialUnreadCount?: number;
 }
 
-export function AdminSidebar({ userEmail = "admin@carevia.vn" }: AdminSidebarProps) {
+export function AdminSidebar({
+  userEmail = "admin@carevia.vn",
+  initialUnreadCount = 0,
+}: AdminSidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [clientCount, setClientCount] = useState<number | null>(null);
+  const unreadCount = clientCount ?? initialUnreadCount;
+
+  // Refresh unread count on pathname change
+  useEffect(() => {
+    let ignore = false;
+    getUnreadContactCountAction()
+      .then((count) => {
+        if (!ignore) {
+          setClientCount(count);
+        }
+      })
+      .catch((err) => {
+        console.warn("[AdminSidebar] Error fetching unread contact count:", err);
+      });
+    return () => {
+      ignore = true;
+    };
+  }, [pathname]);
 
   const isActive = (item: NavItem) => {
     if (item.exact) {
@@ -117,6 +138,8 @@ export function AdminSidebar({ userEmail = "admin@carevia.vn" }: AdminSidebarPro
         {NAV_ITEMS.map((item) => {
           const active = isActive(item);
           const Icon = item.icon;
+          const isContact = item.href === "/admin/contact";
+
           return (
             <Link
               key={item.href}
@@ -135,7 +158,20 @@ export function AdminSidebar({ userEmail = "admin@carevia.vn" }: AdminSidebarPro
                 />
                 <span>{item.name}</span>
               </div>
-              {item.badge && (
+
+              {/* Dynamic unread count badge for contact */}
+              {isContact && unreadCount > 0 ? (
+                <span
+                  className={`text-[11px] font-bold px-2 py-0.5 rounded-full transition-colors ${
+                    active
+                      ? "bg-white text-rose-600 font-extrabold"
+                      : "bg-rose-500 text-white"
+                  }`}
+                  title={`${unreadCount} tin nhắn chưa đọc`}
+                >
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              ) : item.badge ? (
                 <span
                   className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                     active
@@ -145,7 +181,7 @@ export function AdminSidebar({ userEmail = "admin@carevia.vn" }: AdminSidebarPro
                 >
                   {item.badge}
                 </span>
-              )}
+              ) : null}
             </Link>
           );
         })}

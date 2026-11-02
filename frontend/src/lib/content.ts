@@ -345,6 +345,14 @@ async function fetchServiceBySlugUncached(slug: string): Promise<ServiceItem | n
   }
 }
 
+export function estimateReadTime(content?: string | null): string {
+  if (!content) return "1 phút đọc";
+  const cleanText = content.replace(/<[^>]*>/g, " ").trim();
+  const words = cleanText.split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.ceil(words / 200));
+  return `${minutes} phút đọc`;
+}
+
 async function fetchPostsUncached(category?: string): Promise<PostItem[]> {
   const supabase = getAnonSupabase();
   if (!supabase) {
@@ -390,6 +398,7 @@ async function fetchPostsUncached(category?: string): Promise<PostItem[]> {
       author: d.author || "CAREVIA",
       status: d.status,
       publishedAt: d.published_at ? d.published_at.substring(0, 10) : "",
+      readTime: estimateReadTime(d.content),
     }));
   } catch (err) {
     console.warn("[Content] Error fetching posts:", err);
@@ -418,7 +427,8 @@ async function fetchPostBySlugUncached(slug: string): Promise<PostItem | null> {
       return fallbackList.find((p) => p.slug === slug) || null;
     }
 
-    if (!data) {
+    // Hide if not published or if published_at is in the future
+    if (!data || (data.published_at && new Date(data.published_at) > new Date())) {
       return null;
     }
 
@@ -440,6 +450,7 @@ async function fetchPostBySlugUncached(slug: string): Promise<PostItem | null> {
       author: data.author || "CAREVIA",
       status: data.status,
       publishedAt: data.published_at ? data.published_at.substring(0, 10) : "",
+      readTime: estimateReadTime(data.content),
     };
   } catch (err) {
     console.warn(`[Content] Error fetching post '${slug}':`, err);

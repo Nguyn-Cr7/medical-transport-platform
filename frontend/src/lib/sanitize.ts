@@ -1,9 +1,9 @@
-import DOMPurify from "isomorphic-dompurify";
+import sanitizeHtmlLib from "sanitize-html";
 
 export function sanitizeHtml(dirtyHtml: string): string {
   if (!dirtyHtml) return "";
-  return DOMPurify.sanitize(dirtyHtml, {
-    ALLOWED_TAGS: [
+  return sanitizeHtmlLib(dirtyHtml, {
+    allowedTags: [
       "p",
       "h1",
       "h2",
@@ -33,8 +33,14 @@ export function sanitizeHtml(dirtyHtml: string): string {
       "th",
       "td",
     ],
-    ALLOWED_ATTR: ["href", "src", "alt", "title", "target", "rel", "class", "width", "height"],
-    ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+    allowedAttributes: {
+      a: ["href", "name", "target", "rel", "title"],
+      img: ["src", "alt", "title", "width", "height"],
+      "*": ["class"],
+    },
+    allowedSchemes: ["http", "https", "mailto", "tel"],
+    allowedSchemesByTag: {
+      img: ["http", "https", "data"],
+    },
   });
 }
-

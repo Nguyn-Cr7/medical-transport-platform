@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Lock, Mail, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -10,7 +9,6 @@ interface AdminLoginFormProps {
 }
 
 export function AdminLoginForm({ unauthorized = false }: AdminLoginFormProps) {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -51,9 +49,8 @@ export function AdminLoginForm({ unauthorized = false }: AdminLoginFormProps) {
         return;
       }
 
-      // Redirect to /admin
-      router.push("/admin");
-      router.refresh();
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.href = "/admin";
     } catch (err) {
       console.error("[Login] Error:", err);
       setErrorMessage("Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại.");
