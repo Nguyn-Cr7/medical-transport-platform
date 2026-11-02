@@ -1,5 +1,4 @@
 import React from "react";
-import { CTASection } from "@/components/CTASection";
 import { TransportServiceCard } from "@/components/TransportServiceCard";
 import { getServices, getSettings } from "@/lib/content";
 
@@ -47,7 +46,6 @@ export default async function TransportPage() {
           )}
         </div>
       </section>
-      <CTASection />
     </main>
   );
 }

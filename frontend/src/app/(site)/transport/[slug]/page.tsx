@@ -5,7 +5,6 @@ import type { Metadata } from "next";
 import { ArrowLeft, MessageCircle, CheckCircle2 } from "lucide-react";
 import { getService, getServices, getSettings } from "@/lib/content";
 import { PriceImageGallery } from "@/components/PriceImageGallery";
-import { CTASection } from "@/components/CTASection";
 
 export const dynamicParams = true;
 
@@ -142,8 +141,6 @@ export default async function TransportDetailPage({ params }: TransportDetailPag
           </div>
         </div>
       </section>
-
-      <CTASection />
     </main>
   );
 }
