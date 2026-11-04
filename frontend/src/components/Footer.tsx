@@ -97,6 +97,19 @@ export async function Footer() {
                 Tư vấn qua Zalo
               </a>
             </li>
+            {settings.facebookUrl && (
+              <li>
+                Facebook:{" "}
+                <a
+                  href={settings.facebookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white underline"
+                >
+                  Fanpage Facebook
+                </a>
+              </li>
+            )}
             <li>
               <Link href="/contact" className="hover:text-white font-medium underline">
                 Form liên hệ

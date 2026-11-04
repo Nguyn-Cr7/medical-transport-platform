@@ -12,6 +12,7 @@ import type {
   ServiceCategory,
   ServiceActionType,
   PriceImage,
+  HeroImageItem,
   PostItem,
   PostCategory,
   PostStatus,
@@ -42,6 +43,8 @@ interface DbSettingsRow {
   facebook_url: string | null;
   youtube_url: string | null;
   footer_text: string | null;
+  hero_images?: HeroImageItem[] | null;
+  hero_interval_seconds?: number | null;
 }
 
 interface DbServiceRow {
@@ -109,6 +112,8 @@ export function getFallbackSettings(): SiteSettings {
     youtubeUrl: COMPANY_INFO.youtubeUrl,
     footerText:
       "CAREVIA - Hệ sinh thái kết nối dịch vụ Y tế tại nhà & Vận chuyển y tế hàng đầu. Phục vụ 24/7 tận tâm, an toàn, chu đáo.",
+    heroImages: [],
+    heroIntervalSeconds: 5,
   };
 }
 
@@ -241,6 +246,20 @@ async function fetchSettingsUncached(): Promise<SiteSettings> {
       facebookUrl: data.facebook_url,
       youtubeUrl: data.youtube_url,
       footerText: data.footer_text || getFallbackSettings().footerText,
+      heroImages: Array.isArray(data.hero_images)
+        ? data.hero_images
+            .filter((item): item is HeroImageItem => Boolean(item && typeof item === "object" && item.url))
+            .map((item) => ({
+              url: String(item.url),
+              alt: item.alt ? String(item.alt).trim() : "",
+            }))
+        : [],
+      heroIntervalSeconds:
+        typeof data.hero_interval_seconds === "number" &&
+        data.hero_interval_seconds >= 2 &&
+        data.hero_interval_seconds <= 30
+          ? data.hero_interval_seconds
+          : 5,
     };
   } catch (err) {
     console.warn("[Content] Error fetching settings:", err);

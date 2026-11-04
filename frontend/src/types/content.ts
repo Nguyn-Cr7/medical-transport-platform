@@ -7,6 +7,11 @@ export interface PriceImage {
   group?: string;
 }
 
+export interface HeroImageItem {
+  url: string;
+  alt?: string;
+}
+
 export interface ServiceItem {
   id: string;
   category: ServiceCategory;
@@ -78,6 +83,8 @@ export interface SiteSettings {
   facebookUrl?: string | null;
   youtubeUrl?: string | null;
   footerText?: string | null;
+  heroImages: HeroImageItem[];
+  heroIntervalSeconds: number;
 }
 
 export interface ContactMessage {
