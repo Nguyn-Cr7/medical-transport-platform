@@ -119,9 +119,6 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
     const fbErr = checkUrl(formData.facebookUrl, "Facebook");
     if (fbErr) return fbErr;
 
-    const ytErr = checkUrl(formData.youtubeUrl, "YouTube");
-    if (ytErr) return ytErr;
-
     return null;
   };
 
@@ -494,10 +491,10 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
         </div>
       </div>
 
-      {/* 4. Mạng xã hội & Kênh Zalo */}
+      {/* 4. Kênh Zalo & Facebook */}
       <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
         <h2 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3">
-          4. Mạng xã hội & Kênh Zalo
+          4. Kênh Zalo & Facebook
         </h2>
 
         <div>
@@ -520,32 +517,17 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-              Facebook URL
-            </label>
-            <input
-              type="text"
-              value={formData.facebookUrl || ""}
-              onChange={(e) => setFormData({ ...formData, facebookUrl: e.target.value })}
-              placeholder="https://facebook.com/carevia"
-              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-slate-900"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-              YouTube URL
-            </label>
-            <input
-              type="text"
-              value={formData.youtubeUrl || ""}
-              onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value })}
-              placeholder="https://youtube.com/@carevia"
-              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-slate-900"
-            />
-          </div>
+        <div>
+          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+            Facebook URL
+          </label>
+          <input
+            type="text"
+            value={formData.facebookUrl || ""}
+            onChange={(e) => setFormData({ ...formData, facebookUrl: e.target.value })}
+            placeholder="https://facebook.com/carevia"
+            className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-slate-900"
+          />
         </div>
       </div>
 
