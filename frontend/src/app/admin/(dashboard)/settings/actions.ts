@@ -18,6 +18,58 @@ export async function updateSiteSettingsAction(settings: Partial<SiteSettings>) 
     return { success: false, message: "Tên công ty không được để trống." };
   }
 
+  // Validate heroIntervalSeconds
+  let heroInterval = 5;
+  if (typeof settings.heroIntervalSeconds === "number") {
+    if (settings.heroIntervalSeconds < 2 || settings.heroIntervalSeconds > 30) {
+      return {
+        success: false,
+        message: "Thời gian chuyển ảnh phải từ 2 đến 30 giây.",
+      };
+    }
+    heroInterval = Math.round(settings.heroIntervalSeconds);
+  }
+
+  // Validate heroImages
+  const rawHeroImages = settings.heroImages || [];
+  if (!Array.isArray(rawHeroImages)) {
+    return { success: false, message: "Dữ liệu ảnh trình chiếu không hợp lệ." };
+  }
+
+  // Filter out empty items
+  const cleanedHeroImages = rawHeroImages
+    .filter((img) => Boolean(img && typeof img.url === "string" && img.url.trim().length > 0))
+    .map((img) => ({
+      url: img.url.trim(),
+      alt: typeof img.alt === "string" ? img.alt.trim() : "",
+    }));
+
+  if (cleanedHeroImages.length > 8) {
+    return {
+      success: false,
+      message: "Tối đa 8 ảnh trình chiếu trang chủ.",
+    };
+  }
+
+  for (const img of cleanedHeroImages) {
+    if (
+      !img.url.startsWith("http://") &&
+      !img.url.startsWith("https://") &&
+      !img.url.startsWith("/")
+    ) {
+      return {
+        success: false,
+        message: "Đường dẫn ảnh trình chiếu phải bắt đầu bằng http://, https:// hoặc đường dẫn hợp lệ.",
+      };
+    }
+    if (img.alt && img.alt.length > 150) {
+      return {
+        success: false,
+        message: `Mô tả ảnh "${img.alt.slice(0, 30)}..." vượt quá giới hạn 150 ký tự.`,
+      };
+    }
+  }
+
   const supabase = await createClient();
 
   const { error } = await supabase
@@ -35,6 +87,8 @@ export async function updateSiteSettingsAction(settings: Partial<SiteSettings>) 
       facebook_url: settings.facebookUrl || null,
       youtube_url: settings.youtubeUrl || null,
       footer_text: settings.footerText || "",
+      hero_images: cleanedHeroImages,
+      hero_interval_seconds: heroInterval,
     })
     .eq("id", 1);
 
@@ -51,6 +105,7 @@ export async function updateSiteSettingsAction(settings: Partial<SiteSettings>) 
     updateTag("settings");
     revalidateTag("settings", "max");
     revalidatePath("/", "layout");
+    revalidatePath("/", "page");
   } catch (revalErr) {
     console.warn("[SettingsAction] Revalidation note:", revalErr);
   }

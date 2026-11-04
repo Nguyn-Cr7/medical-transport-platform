@@ -8,6 +8,12 @@ import {
   Check,
   AlertCircle,
   HelpCircle,
+  Plus,
+  Trash2,
+  ArrowUp,
+  ArrowDown,
+  Info,
+  Clock,
 } from "lucide-react";
 import type { SiteSettings } from "@/types/content";
 import { MediaPicker } from "./MediaPicker";
@@ -18,15 +24,73 @@ interface SettingsFormProps {
 }
 
 export function SettingsForm({ initialSettings }: SettingsFormProps) {
-  const [formData, setFormData] = useState<SiteSettings>(initialSettings);
+  const [formData, setFormData] = useState<SiteSettings>({
+    ...initialSettings,
+    heroImages: initialSettings.heroImages || [],
+    heroIntervalSeconds: initialSettings.heroIntervalSeconds || 5,
+  });
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
+  const [heroMediaPickerOpen, setHeroMediaPickerOpen] = useState(false);
+
+  const addHeroImage = (url: string) => {
+    if ((formData.heroImages || []).length >= 8) {
+      setErrorMessage("Tối đa 8 ảnh trình chiếu trang chủ.");
+      return;
+    }
+    setFormData((prev) => ({
+      ...prev,
+      heroImages: [...(prev.heroImages || []), { url, alt: "" }],
+    }));
+  };
+
+  const removeHeroImage = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      heroImages: (prev.heroImages || []).filter((_, idx) => idx !== index),
+    }));
+  };
+
+  const moveHeroImage = (index: number, direction: "up" | "down") => {
+    const list = [...(formData.heroImages || [])];
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= list.length) return;
+    const temp = list[index];
+    list[index] = list[targetIndex];
+    list[targetIndex] = temp;
+    setFormData((prev) => ({ ...prev, heroImages: list }));
+  };
+
+  const updateHeroImageAlt = (index: number, alt: string) => {
+    const list = [...(formData.heroImages || [])];
+    if (!list[index]) return;
+    list[index] = { ...list[index], alt };
+    setFormData((prev) => ({ ...prev, heroImages: list }));
+  };
 
   const validate = (): string | null => {
     if (!formData.companyName.trim()) {
       return "Tên công ty không được để trống.";
+    }
+
+    if (
+      typeof formData.heroIntervalSeconds === "number" &&
+      (formData.heroIntervalSeconds < 2 || formData.heroIntervalSeconds > 30)
+    ) {
+      return "Thời gian chuyển ảnh phải từ 2 đến 30 giây.";
+    }
+
+    if ((formData.heroImages || []).length > 8) {
+      return "Tối đa 8 ảnh trình chiếu trang chủ.";
+    }
+
+    for (let i = 0; i < (formData.heroImages || []).length; i++) {
+      const img = formData.heroImages[i];
+      if (img.alt && img.alt.length > 150) {
+        return `Mô tả ảnh thứ ${i + 1} vượt quá 150 ký tự.`;
+      }
     }
 
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
@@ -186,10 +250,176 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
         </div>
       </div>
 
-      {/* 2. Hotline & Thông tin liên hệ */}
+      {/* 2. Ảnh trình chiếu trang chủ (Hero Slideshow) */}
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <span>2. Ảnh trình chiếu trang chủ (Hero Slideshow)</span>
+            </h2>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Thay thế khung ảnh Hero ở trang chủ. Hiển thị trình chiếu tự động hoặc ảnh tĩnh.
+            </p>
+          </div>
+          <span className="self-start sm:self-auto text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 text-slate-700">
+            {(formData.heroImages || []).length}/8 ảnh
+          </span>
+        </div>
+
+        {/* Suggestion banner */}
+        <div className="p-3.5 bg-blue-50/70 border border-blue-100 rounded-2xl flex items-start gap-2.5 text-xs text-blue-800">
+          <Info size={16} className="text-blue-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold">Gợi ý kích thước & định dạng:</p>
+            <p className="text-blue-700 mt-0.5">
+              Nên dùng ảnh có tỷ lệ <strong>4:3</strong> (khoảng 1200 × 900px), dung lượng dưới <strong>500KB</strong>. Nên dùng cùng kích thước cho mọi ảnh để khung hiển thị đồng đều nhất (Tối đa 8 ảnh).
+            </p>
+          </div>
+        </div>
+
+        {/* Interval setting */}
+        <div className="max-w-xs">
+          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+            <Clock size={14} className="text-slate-500" />
+            <span>Thời gian chuyển ảnh (giây)</span>
+          </label>
+          <input
+            type="number"
+            min={2}
+            max={30}
+            step={1}
+            value={formData.heroIntervalSeconds || 5}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                heroIntervalSeconds: parseInt(e.target.value) || 5,
+              })
+            }
+            className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary text-slate-900 font-mono"
+          />
+          <p className="text-[11px] text-slate-400 mt-1">Từ 2 đến 30 giây (mặc định: 5 giây).</p>
+        </div>
+
+        {/* Image Grid / List */}
+        <div>
+          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">
+            Danh sách ảnh trình chiếu
+          </label>
+
+          {(formData.heroImages || []).length === 0 ? (
+            <div className="border-2 border-dashed border-slate-200 rounded-2xl p-8 text-center bg-slate-50/50">
+              <p className="text-sm text-slate-500 mb-4">
+                Chưa có ảnh nào. Trang chủ sẽ hiển thị khung mặc định (&quot;Healthcare Image Placeholder&quot;).
+              </p>
+              <button
+                type="button"
+                onClick={() => setHeroMediaPickerOpen(true)}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-primary hover:bg-brand-primary-dark text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm"
+              >
+                <Plus size={16} />
+                Thêm ảnh đầu tiên
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {formData.heroImages.map((img, idx) => (
+                <div
+                  key={idx}
+                  className="bg-slate-50 border border-slate-200 rounded-2xl p-3 flex flex-col justify-between space-y-3 relative group/card"
+                >
+                  <div className="space-y-2">
+                    {/* Thumbnail */}
+                    <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-slate-200 border border-slate-300/60">
+                      <Image
+                        src={img.url}
+                        alt={img.alt || `Hero slide ${idx + 1}`}
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                      <span className="absolute top-2 left-2 bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded-md">
+                        #{idx + 1}
+                      </span>
+                    </div>
+
+                    {/* Alt input */}
+                    <div>
+                      <input
+                        type="text"
+                        maxLength={150}
+                        placeholder="Mô tả ảnh (alt cho SEO)..."
+                        value={img.alt || ""}
+                        onChange={(e) => updateHeroImageAlt(idx, e.target.value)}
+                        className="w-full text-xs px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:border-brand-primary placeholder:text-slate-400"
+                      />
+                      <div className="flex justify-between text-[10px] text-slate-400 mt-1 px-0.5">
+                        <span>Mô tả ảnh</span>
+                        <span>{(img.alt || "").length}/150</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions: Move Up, Move Down, Delete */}
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-200/60">
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        disabled={idx === 0}
+                        onClick={() => moveHeroImage(idx, "up")}
+                        title="Di chuyển lên trước"
+                        aria-label="Di chuyển lên trước"
+                        className="p-1.5 rounded-lg text-slate-500 hover:text-brand-primary hover:bg-slate-200/80 disabled:opacity-30 disabled:pointer-events-none cursor-pointer transition-colors"
+                      >
+                        <ArrowUp size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={idx === formData.heroImages.length - 1}
+                        onClick={() => moveHeroImage(idx, "down")}
+                        title="Di chuyển xuống sau"
+                        aria-label="Di chuyển xuống sau"
+                        className="p-1.5 rounded-lg text-slate-500 hover:text-brand-primary hover:bg-slate-200/80 disabled:opacity-30 disabled:pointer-events-none cursor-pointer transition-colors"
+                      >
+                        <ArrowDown size={14} />
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => removeHeroImage(idx)}
+                      title="Xóa ảnh này"
+                      aria-label="Xóa ảnh này"
+                      className="p-1.5 rounded-lg text-rose-500 hover:text-rose-700 hover:bg-rose-50 cursor-pointer transition-colors"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+
+              {/* Add button slot if < 8 */}
+              {formData.heroImages.length < 8 && (
+                <button
+                  type="button"
+                  onClick={() => setHeroMediaPickerOpen(true)}
+                  className="flex flex-col items-center justify-center border-2 border-dashed border-brand-primary/30 hover:border-brand-primary bg-brand-light/30 hover:bg-brand-light/60 rounded-2xl min-h-[200px] p-4 text-brand-primary transition-all cursor-pointer group"
+                >
+                  <Plus size={24} className="mb-1.5 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs font-bold">+ Thêm ảnh</span>
+                  <span className="text-[10px] text-slate-400 mt-1">
+                    ({8 - formData.heroImages.length} slot còn lại)
+                  </span>
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 3. Hotline & Thông tin liên hệ */}
       <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
         <h2 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3">
-          2. Thông tin liên hệ & Kênh hỗ trợ
+          3. Thông tin liên hệ & Kênh hỗ trợ
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -264,10 +494,10 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
         </div>
       </div>
 
-      {/* 3. Mạng xã hội & Kênh Zalo */}
+      {/* 4. Mạng xã hội & Kênh Zalo */}
       <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
         <h2 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3">
-          3. Mạng xã hội & Kênh Zalo
+          4. Mạng xã hội & Kênh Zalo
         </h2>
 
         <div>
@@ -319,10 +549,10 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
         </div>
       </div>
 
-      {/* 4. Nội dung Footer */}
+      {/* 5. Nội dung Footer */}
       <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-4">
         <h2 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3">
-          4. Đoạn giới thiệu Footer
+          5. Đoạn giới thiệu Footer
         </h2>
         <div>
           <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
@@ -350,12 +580,23 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
         </button>
       </div>
 
-      {/* Media Picker Modal */}
+      {/* Media Picker for Logo */}
       <MediaPicker
         isOpen={mediaPickerOpen}
         onClose={() => setMediaPickerOpen(false)}
         onSelect={(url) => setFormData({ ...formData, logoUrl: url })}
         title="Chọn Logo Cho Website"
+      />
+
+      {/* Media Picker for Hero Slideshow */}
+      <MediaPicker
+        isOpen={heroMediaPickerOpen}
+        onClose={() => setHeroMediaPickerOpen(false)}
+        onSelect={(url) => {
+          addHeroImage(url);
+          setHeroMediaPickerOpen(false);
+        }}
+        title="Chọn Ảnh Trình Chiếu Trang Chủ"
       />
     </form>
   );

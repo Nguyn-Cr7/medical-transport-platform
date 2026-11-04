@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS public.site_settings (
     facebook_url TEXT,
     youtube_url TEXT,
     footer_text TEXT,
+    hero_images JSONB NOT NULL DEFAULT '[]'::JSONB,
+    hero_interval_seconds INT NOT NULL DEFAULT 5 CHECK (hero_interval_seconds BETWEEN 2 AND 30),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -304,4 +306,10 @@ CREATE POLICY "Allow admin delete media bucket"
 -- VALUES ('<DÁN_USER_UID_VÀO_ĐÂY>')
 -- ON CONFLICT (user_id) DO NOTHING;
 -- ==============================================================================
+
+-- Bổ sung cột cho Hero Slideshow (Idempotent)
+ALTER TABLE public.site_settings 
+  ADD COLUMN IF NOT EXISTS hero_images JSONB NOT NULL DEFAULT '[]'::JSONB, 
+  ADD COLUMN IF NOT EXISTS hero_interval_seconds INT NOT NULL DEFAULT 5 CHECK (hero_interval_seconds BETWEEN 2 AND 30);
+
 

@@ -1,8 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { ShieldCheck, Clock, HeartHandshake, MapPin } from 'lucide-react';
+import { getSettings } from '@/lib/content';
+import { HeroSlideshow } from '@/components/HeroSlideshow';
 
-export default function HomePage() {
+export default async function HomePage() {
+  const settings = await getSettings();
   return (
     <main>
       <section className="bg-brand-light py-20 lg:py-32">
@@ -23,9 +26,10 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
-          <div className="bg-slate-200 rounded-2xl aspect-[4/3] flex items-center justify-center border border-slate-300 shadow-sm overflow-hidden">
-             <div className="text-slate-400 font-medium">Healthcare Image Placeholder</div>
-          </div>
+          <HeroSlideshow
+            images={settings.heroImages}
+            intervalSeconds={settings.heroIntervalSeconds}
+          />
         </div>
       </section>
 
